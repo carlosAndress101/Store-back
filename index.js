@@ -8,11 +8,11 @@ app.listen(port, ()=>{
   console.log(`Server on port: ${port}`)
 })
 
-// Mantener el proceso en ejecución
-function keepAlive() {
-  setInterval(() => {
-    console.log('El backend sigue en ejecución...');
-  }, 15000);
-}
+ // Mantener el proceso en ejecución
+// function keepAlive() {
+//   setInterval(() => {
+//     console.log('El backend sigue en ejecución...');
+//   }, 60000);
+// }
 
-keepAlive();
+// keepAlive();
