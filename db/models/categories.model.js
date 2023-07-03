@@ -35,7 +35,10 @@ class Category extends Model{
     }
     static config(sequelize){
       return {
-        sequelize,tableName:CATEGORIES_TABLE,modelName:'Category',timestamps:false
+        sequelize,
+        tableName:CATEGORIES_TABLE,
+        modelName:'Category',
+        timestamps:false
       }
     }
   }

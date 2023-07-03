@@ -1,44 +1,37 @@
 //const express = require('express');
-const faker = require('faker')
 const {Op} = require('sequelize')
 const boom = require('@hapi/boom')
 const { models } = require('./../libs/sequelize')
 
 class ProductsService {
-  constructor() {
-    this.products = []
-    this.generate()
-  }
 
-  async generate() {
-    const limit = 100
-    /*for de productos con libreria faker */
-    for (let i = 0; i < limit; i++) {
-      this.products.push({
-        id: faker.datatype.uuid(),
-        name: faker.commerce.productName(),
-        price: parseInt(faker.commerce.price(), 10),
-        imagen: faker.image.imageUrl(),
-        isBlock: faker.datatype.boolean(),
-      })
-    }
-  }
+  constructor() {}
+
 
   async create(data) {
-    const newProduct = await models.product.create(data)
-    return newProduct
+    const newProduct = await models.product.create(data);
+    return newProduct;
   }
 
   async find(query) {
-    const options = {
-      include: ['category'],
-      where: {}
-    }
+    //Pagination en mi API dinamica
+    const options = { include:['category'], where:{} };
+
+    /**Limit and Offset */
     const {limit, offset} = query;
-    if(limit && offset ){
-      options.limit = limit,
-      options.offset = offset
+
+    if(limit && offset){
+      options.limit = limit;
+      options.offset = offset;
     }
+
+    /**calculate price */
+    const { price } = query;
+    if(price){
+      options.where.price = price;
+    }
+
+    /**calculate price min and max */
     const { price_min, price_max } = query;
     if(price_min && price_max){
       options.where.price = {
@@ -46,35 +39,30 @@ class ProductsService {
         [Op.lte]: price_max
       };
     }
-    const products = await models.product.findAll(options)
-    return products
+    const products = await models.product.findAll(options);
+    return products;
   }
 
   async findOne(id) {
-    const oneProducts = await models.product.findByPk(id)
-    return oneProducts
+    const product = models.product.findByPk(id);
+    if(!product){
+      throw boom.notFound('Product not found')
+    }
+    return product;
   }
 
-  async update(id, change) {
-    const posi = this.products.findIndex((i) => i.id === id)
-    if (posi === -1) {
-      throw boom.notFound('products not found')
-    }
-    const product = this.products[posi]
-    this.products[posi] = {
-      ...product,
-      ...change,
-    }
-    return this.products[posi]
+  async update(id, changes) {
+
+    const product = await this.findOne(id);
+    const rta = await product.update(changes);
+    return rta;
   }
 
   async delete(id) {
-    const posi = this.products.findIndex((i) => i.id === id)
-    if (posi === -1) {
-      throw boom.notFound('products not found')
-    }
-    this.products.splice(posi, 1)
-    return { id }
+
+    const product = await this.findOne(id);
+    const rta = await product.destroy();
+    return rta;
   }
 }
 

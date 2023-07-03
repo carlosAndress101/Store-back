@@ -1,17 +1,15 @@
 const express = require('express');
 const userService = require('../services/users.service');
 const validatorHandler = require('../middlewares/validator.handler');
-const {
-  createUserSchema,
-  updateUserSchema,
-  getUserSchema,
-} = require('../schemas/users.schema');
+const { createUserSchema, updateUserSchema, getUserSchema } = require('../schemas/users.schema');
 
+
+/**Instancias*/
 const router = express.Router();
 const service = new userService();
 
-//endpoint de usuarios.
 
+//endpoint de users.
 router.get('/', async (req, res, next) => {
   try {
     const users = await service.find();
@@ -21,12 +19,11 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get(
-  '/:id',
+router.get('/:id',
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next) => {
+    const { id } = req.params;
     try {
-      const { id } = req.params;
       const users = await service.findOne(id);
       res.json(users);
     } catch (error) {
@@ -35,24 +32,28 @@ router.get(
   }
 );
 
-router.post(
-  '/',
+router.post('/',
   validatorHandler(createUserSchema, 'body'),
-  async (req, res) => {
+  async (req, res, next) => {
     const body = req.body;
-    const newUser = await service.create(body);
-    res.status(201).json(newUser);
+    try {
+      const newUser = await service.create(body);
+      res.status(201).json(newUser);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
-router.patch(
-  '/:id',
+router.patch('/:id',
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateUserSchema, 'body'),
   async (req, res, next) => {
+
+    const { id } = req.params;
+    const body = req.body;
+
     try {
-      const { id } = req.params;
-      const body = req.body;
       const user = await service.update(id, body);
       res.status(200).json(user);
     } catch (error) {
@@ -61,14 +62,13 @@ router.patch(
   }
 );
 
-router.delete(
-  '/:id',
+router.delete('/:id',
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next) => {
+    const { id } = req.params;
     try {
-      const { id } = req.params;
-      await service.delete(id);
-      res.status(201).json({ id });
+      const user = await service.delete(id);
+      res.status(200).json(user);
     } catch (error) {
       next(error);
     }

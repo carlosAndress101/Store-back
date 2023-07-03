@@ -1,13 +1,24 @@
-const { models } = require('../libs/sequelize');
+//import boom from '@hapi/boom'
+const sequelize = require ('../libs/sequelize.js')
+const { models } = sequelize;
 class OrderService {
 
     async create (data) {
+      
       const newOrder = await models.Order.create(data);
       return newOrder;
     }
+
     async addItem (data){
       const newItem = await models.Order_Product.create(data);
       return newItem;
+    }
+
+    async findByUser(userId){
+        const res = await models.Order.findAll({
+          where:{'$customer.users.id$':userId},
+          include:[{association:'customer', include:['users']}]});
+        return res;
     }
 
     async find(){
@@ -21,19 +32,23 @@ class OrderService {
           {
             association:'customer',
             include:['users']
-          },
-          'items'
+          }
         ]
       });
       return resOrder
     }
 
-    update(){
+    async update(id, changes){
+      const order = await this.findOne(id);
+      const rta = await order.update(changes);
+      return rta;
 
     }
 
-    delete(){
-
+    async delete(id){
+      const order = await this.findOne(id);
+      const rta = await order.destroy();
+      return rta;
     }
 }
 

@@ -1,16 +1,23 @@
+const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
 const { models } = require('../libs/sequelize');
 class UserService {
 
   async create(data) {
-    const newUser = await models.users.create(data)
+    const hash = await bcrypt.hash(data.password, 10);
+    const newUser = await models.users.create({ ...data, password:hash });
+    delete newUser.dataValues.password;
     return newUser;
   }
 
   async find() {
-    const res = await models.users.findAll({
-      include: ['customer']
-    });
+    const res = await models.users.findAll({include: ['customer']});
+    return res;
+  }
+
+  /**consumed by local-strategy*/
+  async findByEmail(email) {
+    const res = await models.users.findOne({where:{email}});
     return res;
   }
 
@@ -31,8 +38,8 @@ class UserService {
 
   async delete(id) {
     const user = await this.findOne(id);
-    await user.destroy();
-    return { id };
+    const rta = await user.destroy();
+    return rta;
   }
 }
 

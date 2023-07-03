@@ -1,17 +1,16 @@
 version: '3.3'
 
 services:
-  postgres:
-    image: postgres:13
-    restart: always
+  store:
+    image: postgres:latest
     environment:
-      - POSTGRES_DB=my_store
-      - POSTGRES_USER=carlos
-      - POSTGRES_PASSWORD=admin123
+      POSTGRES_DB: my_store
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - "~/postgres_data:/var/lib/postgresql/data"
   pgadmin:
     image: dpage/pgadmin4
     restart: always

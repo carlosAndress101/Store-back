@@ -1,9 +1,11 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/node,windows,linux,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,windows,linux,macos
 
 ### Linux ###
 *~
+
+### Linux ###
+migrations
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -215,9 +217,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-#carpeta de base de datos
-postgres_data
-mysql_data
 
 # End of https://www.toptal.com/developers/gitignore/api/node,windows,linux,macos

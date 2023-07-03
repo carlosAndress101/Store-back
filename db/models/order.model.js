@@ -29,12 +29,16 @@ const OrderSchema = {
   total: {
     type: DataTypes.VIRTUAL,
     get() {
-      if (this.items.length > 0) {
-        return this.items.reduce((total, item) => {
-          return total + (item.price * item.Order_Product.amount);
-        }, 0);
+      //Reviso si tenemos productos
+      if(this.items) {
+        console.log('has items in the order')
+        if(this.items.length > 0) {
+          return this.items.reduce((total, item) => {
+            return total + (item.price * item.OrderProduct.amount)
+          }, 0)
+        }
+        return 0
       }
-      return 0;
     }
   }
 }
