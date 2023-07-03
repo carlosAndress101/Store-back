@@ -26,6 +26,10 @@ app.get('/newroute', checkApiKey, (req, res)=>{
   res.send('soy una nueva ruta')
 })
 
+app.get('/', (req, res)=>{
+  res.send('Ready')
+})
+
 
 
 
